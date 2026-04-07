@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>WA React Booster</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0a0f0d;
+    --card: #111a15;
+    --green: #25d366;
+    --green2: #128c7e;
+    --accent: #00ffaa;
+    --text: #e8f5e9;
+    --muted: #4caf7d;
+    --border: #1e3a2a;
+    --danger: #ff4f4f;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    overflow-x: hidden;
+  }
+
+  /* Ambient background */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -30%;
+    left: -20%;
+    width: 70vw;
+    height: 70vw;
+    background: radial-gradient(circle, rgba(37,211,102,0.07) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: -20%;
+    right: -10%;
+    width: 50vw;
+    height: 50vw;
+    background: radial-gradient(circle, rgba(0,255,170,0.05) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 520px;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .logo-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, var(--green), var(--green2));
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    box-shadow: 0 0 24px rgba(37,211,102,0.3);
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(26px, 6vw, 36px);
+    font-weight: 800;
+    background: linear-gradient(90deg, var(--green), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -1px;
+  }
+
+  .tagline {
+    color: var(--muted);
+    font-size: 14px;
+    margin-top: 4px;
+  }
+
+  /* Warning Banner */
+  .warning {
+    background: rgba(255,79,79,0.08);
+    border: 1px solid rgba(255,79,79,0.25);
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 13px;
+    color: #ff9090;
+    margin-bottom: 24px;
+    line-height: 1.6;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .warning span { font-size: 18px; flex-shrink: 0; }
+
+  /* Card */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 28px 24px;
+    box-shadow: 0 8px 48px rgba(0,0,0,0.4);
+    margin-bottom: 20px;
+  }
+
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+
+  .input-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  input[type="text"] {
+    flex: 1;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 13px 16px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border 0.2s, box-shadow 0.2s;
+  }
+
+  input[type="text"]:focus {
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px rgba(37,211,102,0.12);
+  }
+
+  input[type="text"]::placeholder { color: #3a5a45; }
+
+  /* React selector */
+  .react-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .react-btn {
+    background: rgba(255,255,255,0.03);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 6px;
+    cursor: pointer;
+    text-align: center;
+    font-size: 22px;
+    transition: all 0.15s;
+    position: relative;
+  }
+
+  .react-btn:hover { border-color: var(--green); transform: scale(1.05); }
+  .react-btn.selected {
+    border-color: var(--accent);
+    background: rgba(0,255,170,0.08);
+    box-shadow: 0 0 12px rgba(0,255,170,0.15);
+  }
+  .react-btn .check {
+    position: absolute;
+    top: -5px; right: -5px;
+    width: 16px; height: 16px;
+    background: var(--accent);
+    border-radius: 50%;
+    font-size: 10px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    color: #000;
+    font-weight: bold;
+  }
+  .react-btn.selected .check { display: flex; }
+
+  /* Count slider */
+  .count-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+
+  input[type="range"] {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 4px;
+    background: linear-gradient(90deg, var(--green) var(--pct, 100%), var(--border) 0%);
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px rgba(0,255,170,0.5);
+    cursor: pointer;
+  }
+
+  .count-badge {
+    background: rgba(0,255,170,0.1);
+    border: 1px solid rgba(0,255,170,0.3);
+    color: var(--accent);
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 10px;
+    min-width: 64px;
+    text-align: center;
+  }
+
+  /* Main button */
+  .btn-boost {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--green), var(--green2));
+    border: none;
+    border-radius: 14px;
+    color: #fff;
+    font-family: 'Syne', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 24px rgba(37,211,102,0.25);
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-boost:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(37,211,102,0.35);
+  }
+
+  .btn-boost:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .btn-boost::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+    animation: shimmer 2s infinite;
+  }
+
+  @keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 200%; }
+  }
+
+  /* Progress section */
+  .progress-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 20px;
+    display: none;
+  }
+  .progress-card.show { display: block; }
+
+  .prog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  .prog-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .prog-count {
+    font-size: 28px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    color: var(--accent);
+    text-align: center;
+    margin-bottom: 12px;
+    text-shadow: 0 0 20px rgba(0,255,170,0.3);
+    transition: all 0.1s;
+  }
+
+  .progress-bar-bg {
+    background: rgba(255,255,255,0.05);
+    border-radius: 8px;
+    height: 8px;
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--green), var(--accent));
+    border-radius: 8px;
+    transition: width 0.1s linear;
+    box-shadow: 0 0 8px rgba(0,255,170,0.4);
+    width: 0%;
+  }
+
+  .prog-status {
+    font-size: 12px;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  /* Success */
+  .success-card {
+    background: rgba(37,211,102,0.06);
+    border: 1px solid rgba(37,211,102,0.25);
+    border-radius: 20px;
+    padding: 28px 24px;
+    text-align: center;
+    display: none;
+    animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .success-card.show { display: block; }
+
+  @keyframes popIn {
+    from { transform: scale(0.85); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .success-emoji { font-size: 52px; margin-bottom: 12px; }
+  .success-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--green);
+    margin-bottom: 8px;
+  }
+  .success-sub { font-size: 14px; color: var(--muted); }
+
+  /* Particles */
+  .particle {
+    position: fixed;
+    pointer-events: none;
+    font-size: 20px;
+    animation: flyUp 1.2s ease-out forwards;
+    z-index: 999;
+  }
+
+  @keyframes flyUp {
+    0% { transform: translateY(0) scale(1); opacity: 1; }
+    100% { transform: translateY(-200px) scale(1.5); opacity: 0; }
+  }
+
+  .disclaimer {
+    text-align: center;
+    font-size: 11px;
+    color: #2a4a35;
+    margin-top: 12px;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrapper">
+  <div class="header">
+    <div class="logo">
+      <div class="logo-icon">💬</div>
+      <h1>ReactBoost</h1>
+    </div>
+    <p class="tagline">WhatsApp Channel React Simulator</p>
+  </div>
+
+  <div class="warning">
+    <span>⚠️</span>
+    <div>Yeh tool <strong>simulation only</strong> hai — real WhatsApp API access ke bina actual reacts nahi bhej sakta. Yeh UI demo aur learning ke liye hai.</div>
+  </div>
+
+  <div class="card">
+    <label>WhatsApp Post Link</label>
+    <input type="text" id="linkInput" placeholder="https://whatsapp.com/channel/..." />
+
+    <label>React Type Choose Karo</label>
+    <div class="react-grid" id="reactGrid">
+      <button class="react-btn selected" data-emoji="❤️">❤️<div class="check">✓</div></button>
+      <button class="react-btn" data-emoji="👍">👍<div class="check">✓</div></button>
+      <button class="react-btn" data-emoji="😂">😂<div class="check">✓</div></button>
+      <button class="react-btn" data-emoji="😮">😮<div class="check">✓</div></button>
+      <button class="react-btn" data-emoji="😢">😢<div class="check">✓</div></button>
+      <button class="react-btn" data-emoji="🙏">🙏<div class="check">✓</div></button>
+      <button class="react-btn" data-emoji="🔥">🔥<div class="check">✓</div></button>
+      <button class="react-btn" data-emoji="🎉">🎉<div class="check">✓</div></button>
+      <button class="react-btn" data-emoji="💯">💯<div class="check">✓</div></button>
+      <button class="react-btn" data-emoji="⚡">⚡<div class="check">✓</div></button>
+    </div>
+
+    <label>React Count: <span id="countLabel">1000</span></label>
+    <div class="count-row">
+      <input type="range" id="countSlider" min="100" max="5000" step="100" value="1000" />
+      <div class="count-badge" id="countBadge">1K</div>
+    </div>
+
+    <button class="btn-boost" id="boostBtn" onclick="startBoost()">
+      <span>🚀</span> Boost Reacts
+    </button>
+  </div>
+
+  <div class="progress-card" id="progressCard">
+    <div class="prog-header">
+      <span class="prog-title">⚡ Boosting...</span>
+      <span id="progEmoji">❤️</span>
+    </div>
+    <div class="prog-count" id="progCount">0</div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progressFill"></div>
+    </div>
+    <div class="prog-status" id="progStatus">Connecting to servers...</div>
+  </div>
+
+  <div class="success-card" id="successCard">
+    <div class="success-emoji">🎉</div>
+    <div class="success-title">Boost Complete!</div>
+    <div class="success-sub" id="successSub">1000 reacts successfully simulated!</div>
+  </div>
+
+  <p class="disclaimer">Demo tool — No actual WhatsApp API calls are made.</p>
+</div>
+
+<script>
+  let selectedEmoji = '❤️';
+  let boostInterval = null;
+
+  // React buttons
+  document.querySelectorAll('.react-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.react-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedEmoji = btn.dataset.emoji;
+      document.getElementById('progEmoji').textContent = selectedEmoji;
+    });
+  });
+
+  // Slider
+  const slider = document.getElementById('countSlider');
+  const countLabel = document.getElementById('countLabel');
+  const countBadge = document.getElementById('countBadge');
+
+  function updateSlider() {
+    const val = parseInt(slider.value);
+    countLabel.textContent = val.toLocaleString();
+    countBadge.textContent = val >= 1000 ? (val/1000) + 'K' : val;
+    const pct = ((val - slider.min) / (slider.max - slider.min)) * 100;
+    slider.style.setProperty('--pct', pct + '%');
+  }
+
+  slider.addEventListener('input', updateSlider);
+  updateSlider();
+
+  const statuses = [
+    'Connecting to servers...',
+    'Authenticating accounts...',
+    'Sending reacts...',
+    'Distributing across nodes...',
+    'Finalizing boost...'
+  ];
+
+  function startBoost() {
+    const link = document.getElementById('linkInput').value.trim();
+    if (!link) {
+      document.getElementById('linkInput').style.borderColor = 'var(--danger)';
+      document.getElementById('linkInput').placeholder = '⚠️ Link zaroor dalo!';
+      setTimeout(() => {
+        document.getElementById('linkInput').style.borderColor = '';
+        document.getElementById('linkInput').placeholder = 'https://whatsapp.com/channel/...';
+      }, 2000);
+      return;
+    }
+
+    const target = parseInt(slider.value);
+    let current = 0;
+    let statusIdx = 0;
+
+    document.getElementById('progressCard').classList.add('show');
+    document.getElementById('successCard').classList.remove('show');
+    document.getElementById('boostBtn').disabled = true;
+    document.getElementById('progEmoji').textContent = selectedEmoji;
+    document.getElementById('progCount').textContent = '0';
+    document.getElementById('progressFill').style.width = '0%';
+
+    if (boostInterval) clearInterval(boostInterval);
+
+    const speed = Math.ceil(target / 80); // steps
+
+    boostInterval = setInterval(() => {
+      current = Math.min(current + speed, target);
+      const pct = (current / target) * 100;
+
+      document.getElementById('progCount').textContent = current.toLocaleString();
+      document.getElementById('progressFill').style.width = pct + '%';
+
+      // Status rotation
+      statusIdx = Math.floor((pct / 100) * statuses.length);
+      if (statusIdx >= statuses.length) statusIdx = statuses.length - 1;
+      document.getElementById('progStatus').textContent = statuses[statusIdx];
+
+      // Random particles
+      if (Math.random() < 0.3) spawnParticle();
+
+      if (current >= target) {
+        clearInterval(boostInterval);
+        setTimeout(() => {
+          document.getElementById('progressCard').classList.remove('show');
+          document.getElementById('successCard').classList.add('show');
+          document.getElementById('successSub').textContent =
+            `${target.toLocaleString()} ${selectedEmoji} reacts successfully simulated!`;
+          document.getElementById('boostBtn').disabled = false;
+          for (let i = 0; i < 20; i++) setTimeout(spawnParticle, i * 80);
+        }, 400);
+      }
+    }, 50);
+  }
+
+  function spawnParticle() {
+    const el = document.createElement('div');
+    el.className = 'particle';
+    el.textContent = selectedEmoji;
+    el.style.left = Math.random() * 90 + 5 + 'vw';
+    el.style.bottom = '10vh';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 1300);
+  }
+</script>
+</body>
+</html>
